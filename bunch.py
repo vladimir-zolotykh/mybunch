@@ -35,21 +35,12 @@ class BunchMeta(type):
         defaults = {}
 
         def __init__(self, **kwds):
-            if set(defaults) == set(kwds):
-                self.__dict__.update(kwds)
-            else:
-                raise TypeError(f"Can init only {defaults}")
+            for name, val in kwds.items():
+                setattr(self, name, val)
 
         def __repr__(self):
-            changed = []
-            for name, dval in defaults.items():
-                val = getattr(self, name)
-                if val == dval:
-                    continue
-                else:
-                    changed.append(val)
-            args = ", ".join(f"{x}" for x in changed)
-            return f"type(self).__name__({args})"
+            args = ", ".join(f"{getattr(self, name)}" for name in defaults)
+            return f"{type(self).__name__}({args})"
 
         ns2 = {"__slots__": [], "__init__": __init__, "__repr__": __repr__}
 
@@ -58,8 +49,9 @@ class BunchMeta(type):
                 if name in ns2:
                     raise TypeError(f"Cannot overwrite {name}")
                 ns2[name] = val
-            defaults[name] = val
-            ns2["__slots__"].append(name)
+            else:
+                defaults[name] = val
+                ns2["__slots__"].append(name)
         return super().__new__(mcls, clsname, bases, ns2)
 
 
@@ -70,5 +62,5 @@ class Bunch(metaclass=BunchMeta):
 
 
 if __name__ == "__main__":
-    b1 = Bunch()
+    b1 = Bunch(x=1, y=2, color="gray")
     print(b1)
