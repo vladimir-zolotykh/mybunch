@@ -46,7 +46,11 @@ class BunchMeta(type):
                 raise TypeError(f"Extra args: {extra}")
 
         def __repr__(self):
-            args = ", ".join(f"{getattr(self, name)}" for name in defaults)
+            args = ", ".join(
+                f"{name}={getattr(self, name)}"
+                for name, dval in defaults.items()
+                if dval != getattr(self, name)
+            )
             return f"{type(self).__name__}({args})"
 
         ns2 = {"__slots__": [], "__init__": __init__, "__repr__": __repr__}
@@ -70,5 +74,5 @@ class Bunch(metaclass=BunchMeta):
 
 if __name__ == "__main__":
     # b1 = Bunch(x=1, y=2, z=3, color="gray")
-    b1 = Bunch()
+    b1 = Bunch(x=1.0)
     print(b1)
