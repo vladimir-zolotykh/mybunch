@@ -38,10 +38,6 @@ class BunchMeta(type):
             for name in defaults:
                 val = kwds.pop(name, None)
                 setattr(self, name, (defaults[name] if val is None else val))
-                # if val is None:
-                #     setattr(self, name, defaults[name])
-                # else:
-                #     setattr(self, name, val)
             if kwds:
                 extra = ", ".join(k for k in kwds)
                 raise TypeError(f"Extra args: {extra}")
