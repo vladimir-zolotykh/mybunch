@@ -35,8 +35,13 @@ class BunchMeta(type):
         defaults = {}
 
         def __init__(self, **kwds):
-            for name, val in kwds.items():
-                setattr(self, name, val)
+            for name in defaults:
+                val = kwds.pop(name, None)
+                if val is not None:
+                    setattr(self, name, val)
+            if kwds:
+                extra = ", ".join(k for k in kwds)
+                raise TypeError(f"Extra args: {extra}")
 
         def __repr__(self):
             args = ", ".join(f"{getattr(self, name)}" for name in defaults)
@@ -62,5 +67,5 @@ class Bunch(metaclass=BunchMeta):
 
 
 if __name__ == "__main__":
-    b1 = Bunch(x=1, y=2, color="gray")
+    b1 = Bunch(x=1, y=2, z=3, color="gray")
     print(b1)
