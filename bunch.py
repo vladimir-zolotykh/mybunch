@@ -47,9 +47,9 @@ class BunchMeta(type):
 
         def __repr__(self):
             args = ", ".join(
-                f"{name}={getattr(self, name)}"
+                f"{name}={val!r}"
                 for name, dval in defaults.items()
-                if dval != getattr(self, name)
+                if dval != (val := getattr(self, name))
             )
             return f"{type(self).__name__}({args})"
 
