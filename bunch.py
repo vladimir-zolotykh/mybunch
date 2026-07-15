@@ -34,18 +34,32 @@ class BunchMeta(type):
     def __new__(mcls, clsname, bases, ns):
         defaults = {}
 
-        def __init__(self, *args, **kwds):
-            """Initialize only attributes in defaults"""
-            pass
+        def __init__(self, **kwds):
+            if set(defaults) == set(kwds):
+                self.__dict__.update(kwds)
+            else:
+                raise TypeError(f"Can init only {defaults}")
 
         def __repr__(self):
-            """Print attributes only if they differ from defaults"""
-            pass
+            changed = []
+            for name, dval in defaults.items():
+                val = getattr(self, name)
+                if val == dval:
+                    continue
+                else:
+                    changed.append(val)
+            args = ", ".join(f"{x}" for x in changed)
+            return f"type(self).__name__({args})"
 
         ns2 = {"__slots__": [], "__init__": __init__, "__repr__": __repr__}
 
-        for key, val in ns.items():
-            pass
+        for name, val in ns.items():
+            if name[:2] == "__" and name[-2:] == "__":
+                if name in ns2:
+                    raise TypeError(f"Cannot overwrite {name}")
+                ns2[name] = val
+            defaults[name] = val
+            ns2["__slots__"].append(name)
         return super().__new__(mcls, clsname, bases, ns2)
 
 
@@ -56,4 +70,5 @@ class Bunch(metaclass=BunchMeta):
 
 
 if __name__ == "__main__":
-    pass
+    b1 = Bunch()
+    print(b1)
