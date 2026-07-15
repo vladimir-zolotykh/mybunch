@@ -49,5 +49,11 @@ class BunchMeta(type):
         return super().__new__(mcls, clsname, bases, ns2)
 
 
+class Bunch(metaclass=BunchMeta):
+    x = 0.0
+    y = 0.0
+    color = "gray"
+
+
 if __name__ == "__main__":
     pass
