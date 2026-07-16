@@ -40,7 +40,7 @@ class BunchMeta(type):
                 setattr(self, name, (defaults[name] if val is None else val))
             if kwds:
                 extra = ", ".join(k for k in kwds)
-                raise TypeError(f"Extra args: {extra}")
+                raise AttributeError(f"Extra args: {extra}")
 
         def __repr__(self):
             args = ", ".join(
@@ -55,7 +55,7 @@ class BunchMeta(type):
         for name, val in ns.items():
             if name[:2] == "__" and name[-2:] == "__":
                 if name in ns2:
-                    raise TypeError(f"Cannot overwrite {name}")
+                    raise AttributeError(f"Cannot overwrite {name}")
                 ns2[name] = val
             else:
                 defaults[name] = val
